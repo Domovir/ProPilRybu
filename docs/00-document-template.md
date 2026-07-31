@@ -21,7 +21,7 @@
 
 ---
 
-# Purpose
+## Purpose
 
 This template defines the standard structure used for all technical documentation within the ProPilRybu project.
 
@@ -29,38 +29,38 @@ Its purpose is to ensure consistency, readability and maintainability across the
 
 ---
 
-# Scope
+## Scope
 
 This template applies to every document located in the `docs/` directory unless otherwise specified.
 
 ---
 
-# Metadata
+## Metadata
 
 Each document shall begin with the metadata table shown above.
 
 The following fields are mandatory:
 
 | Field | Description |
-|--------|-------------|
-| Document | File name |
-| Title | Document title |
-| Category | Documentation category |
-| Project | Project name |
-| Version | Document version |
-| Status | Draft / Review / Production / Deprecated / Archived |
-| Owner | Project owner |
-| Maintainer | Person responsible for updates |
-| Repository | GitHub repository |
-| License | Project license |
-| Created | Creation date |
-| Last Updated | Last modification date |
-| Reviewed | Last review date |
-| Next Review | Planned review date |
+|-------|-------------|
+| **Document** | File name |
+| **Title** | Document title |
+| **Category** | Documentation category |
+| **Project** | Project name |
+| **Version** | Document version |
+| **Status** | Draft / Review / Production / Deprecated / Archived |
+| **Owner** | Project owner |
+| **Maintainer** | Person responsible for updates |
+| **Repository** | GitHub repository |
+| **License** | Project license |
+| **Created** | Creation date |
+| **Last Updated** | Last modification date |
+| **Reviewed** | Last review date |
+| **Next Review** | Planned review date |
 
 ---
 
-# Document Structure
+## Document Structure
 
 Every technical document should follow this order:
 
@@ -84,7 +84,7 @@ Change History
 
 ---
 
-# Heading Levels
+## Heading Levels
 
 Use the following Markdown heading hierarchy.
 
@@ -116,12 +116,12 @@ Use only the sections relevant to the document.
 
 ---
 
-# Status Values
+## Status Values
 
 Use one of the following document statuses.
 
 | Status | Meaning |
-|---------|----------|
+|--------|---------|
 | 🟡 Draft | Work in progress |
 | 🔵 Review | Under technical review |
 | 🟢 Production | Official approved document |
@@ -130,7 +130,7 @@ Use one of the following document statuses.
 
 ---
 
-# Writing Style
+## Writing Style
 
 The documentation should:
 
@@ -143,7 +143,7 @@ The documentation should:
 
 ---
 
-# Related Documents
+## Related Documents
 
 Every document should reference other relevant documents.
 
@@ -157,19 +157,19 @@ Example:
 
 ---
 
-# Change History
+## Change History
 
 Every document should end with a change history table.
 
 Example:
 
 | Version | Date | Description |
-|----------|------------|-------------------------------|
+|----------|------------|--------------------------|
 | 1.0 | 2026-07-31 | Initial document created |
 
 ---
 
-# File Naming Convention
+## File Naming Convention
 
 Documentation files should follow the naming convention:
 
@@ -195,7 +195,7 @@ Examples:
 
 ---
 
-# Versioning
+## Versioning
 
 Documentation versions should follow Semantic Versioning principles.
 
@@ -208,13 +208,12 @@ Examples:
 2.0
 ```
 
-Minor updates increase the minor version.
-
-Major restructuring increases the major version.
+- Minor updates increase the minor version.
+- Major restructuring increases the major version.
 
 ---
 
-# Notes
+## Notes
 
 This template is considered the official documentation standard for the ProPilRybu project.
 
@@ -225,5 +224,5 @@ Any future documents should be created by copying this template and replacing th
 ## Change History
 
 | Version | Date | Description |
-|----------|------------|-------------------------------|
+|----------|------------|------------------------------------------|
 | 1.0 | 2026-07-31 | Initial documentation template created |
