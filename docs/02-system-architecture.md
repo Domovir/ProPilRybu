@@ -1,168 +1,304 @@
----
-title: System Architecture
-document: 02-system-architecture
-version: 1.0
-status: Draft
-owner: ProPilRybu
-created: 2026-07-31
-updated: 2026-07-31
-reviewed:
-next_review: 2027-01-31
-category: Architecture
-tags:
-  - architecture
-  - cctv
-  - rtsp
-  - ffmpeg
-  - systemd
-related:
-  - 01-server-passport.md
-  - 03-camera-configuration.md
-  - 04-storage.md
-  - 05-services.md
-  - 06-scripts.md
-  - 07-monitoring.md
-  - 08-maintenance.md
-  - 09-disaster-recovery.md
----
+| Property | Value |
+|----------|-------|
+| **Document** | 02-system-architecture.md |
+| **Title** | System Architecture |
+| **Category** | Architecture |
+| **Project** | ProPilRybu |
+| **Version** | 1.0 |
+| **Status** | 🟢 Production |
+| **Owner** | Domovir |
+| **Maintainer** | Domovir |
+| **Repository** | https://github.com/Domovir/ProPilRybu |
+| **License** | MIT |
+| **Created** | 2026-07-31 |
+| **Last Updated** | 2026-07-31 |
+| **Reviewed** | — |
+| **Next Review** | 2026-10-31 |
 
-# Архитектура системы ProPilRybu
+> **This document is part of the official technical documentation of the ProPilRybu project.**
 
-## 1. Назначение документа
-
-Документ описывает общую архитектуру системы видеонаблюдения ProPilRybu, взаимодействие её компонентов и потоки данных.
-
-Детальные настройки отдельных компонентов приведены в специализированных документах проекта.
+# System Architecture
 
 ---
 
-## 2. Назначение системы
+## Purpose
 
-Система предназначена для:
+This document describes the overall architecture of the ProPilRybu CCTV recording system.
 
-* круглосуточной записи видеопотоков;
-* долговременного хранения архива;
-* автоматической очистки архива при нехватке дискового пространства;
-* автоматического восстановления записи после сбоев;
-* контроля состояния сервисов.
+It explains how system components interact, how video data flows through the platform, and the architectural principles used to ensure reliability, maintainability, and continuous operation.
 
 ---
 
-## 3. Основные компоненты
+## Scope
 
-### Сервер
+This document covers:
 
-* Ubuntu Server
-* Центральный узел обработки
-* Хранение видеоархива
-* Запуск сервисов записи
-* Выполнение служебных скриптов
-
----
-
-### Камеры
-
-В систему входят IP-камеры:
-
-* Bahus
-* LaVanda
-* Salon
-
-Каждая камера передаёт видеопоток по RTSP.
+- Overall system architecture
+- Video recording workflow
+- Storage architecture
+- Background services
+- Monitoring
+- Archive management
+- Design principles
 
 ---
 
-### Сервисы записи
+## Architecture Overview
 
-Для каждой камеры используется отдельный сервис systemd.
+The ProPilRybu platform is designed as a modular CCTV recording system based on Ubuntu Server and open-source technologies.
 
-Основные задачи сервисов:
+Each subsystem has a single responsibility and communicates through well-defined interfaces.
 
-* подключение к RTSP-потоку;
-* запуск FFmpeg;
-* непрерывная запись архива;
-* автоматический перезапуск при ошибках.
+Main architectural goals:
 
----
-
-### Хранилище
-
-Видеоархив хранится в каталоге:
-
-`/home/ftpuser/Videos`
-
-Каждая камера использует собственную структуру каталогов.
+- Continuous 24×7 operation
+- Fault isolation
+- Simple maintenance
+- Automatic recovery
+- Minimal dependencies
+- High reliability
 
 ---
 
-### Скрипты обслуживания
-
-Фоновые скрипты выполняют:
-
-* контроль заполнения диска;
-* удаление старых архивов;
-* проверку корректности записи;
-* формирование уведомлений.
-
----
-
-## 4. Поток данных
+## High-Level Architecture
 
 ```text
-IP-камера
-      │
-      ▼
-RTSP-поток
-      │
-      ▼
-systemd
-      │
-      ▼
-FFmpeg
-      │
-      ▼
-Видеофайл (.mkv)
-      │
-      ▼
-Каталог архива
-      │
-      ▼
-Контроль заполнения диска
-      │
-      ▼
-Автоматическая очистка
+                +----------------------+
+                |      IP Cameras      |
+                +----------+-----------+
+                           |
+                           | RTSP
+                           v
+                +----------------------+
+                |        FFmpeg        |
+                | Recording Services   |
+                +----------+-----------+
+                           |
+                           | MKV files
+                           v
+                +----------------------+
+                | Video Archive        |
+                | /home/ftpuser/Videos |
+                +----------+-----------+
+                           |
+         +-----------------+-----------------+
+         |                                   |
+         v                                   v
++---------------------+           +----------------------+
+| Cleanup Script      |           | Monitoring           |
+| cctv_cleanup.sh     |           | Logs / Email         |
++----------+----------+           +----------+-----------+
+           |                                 |
+           +-----------------+---------------+
+                             |
+                             v
+                  System Administration
 ```
 
 ---
 
-## 5. Взаимодействие компонентов
+## System Components
 
-Камеры не взаимодействуют между собой.
+### Cameras
 
-Каждая камера обслуживается собственным сервисом записи.
+The system currently records video from three independent cameras.
 
-Все сервисы используют единое хранилище и единый механизм обслуживания архива.
+- Bahus
+- LaVanda
+- Salon
 
-Мониторинг контролирует состояние сервисов и объём свободного места.
+Each camera records independently.
 
----
-
-## 6. Связанные документы
-
-* `01-server-passport.md`
-* `03-camera-configuration.md`
-* `04-storage.md`
-* `05-services.md`
-* `06-scripts.md`
-* `07-monitoring.md`
-* `08-maintenance.md`
-* `09-disaster-recovery.md`
+A failure of one camera does not interrupt recording from the others.
 
 ---
 
-## 7. История изменений
+### Recording Layer
 
-| Дата       | Версия | Изменение          |
-| ---------- | ------ | ------------------ |
-| YYYY-MM-DD | 1.0    | Создание документа |
+Recording is performed using FFmpeg.
 
+Characteristics:
+
+- Direct RTSP recording
+- No video transcoding
+- HEVC (H.265) preserved
+- MKV container
+- Independent recording processes
+- Automatic restart through systemd
+
+---
+
+### Storage Layer
+
+Video files are stored on a dedicated storage volume.
+
+Archive location:
+
+```text
+/home/ftpuser/Videos
+```
+
+Current layout:
+
+```text
+Videos/
+├── Bahus/
+├── LaVanda/
+└── Salon/
+```
+
+Each camera stores recordings in its own directory.
+
+---
+
+### Archive Management
+
+Archive cleanup is performed automatically.
+
+Current policy:
+
+- Start cleanup at 90% disk usage.
+- Stop cleanup at 85%.
+- Delete the oldest completed recordings first.
+- Never remove active recordings.
+- Remove empty directories.
+- Remove stale zero-byte MKV files.
+
+---
+
+### Monitoring
+
+Current monitoring includes:
+
+- Disk usage
+- Cleanup logs
+- Email notifications
+- Service status
+
+Future improvements:
+
+- Telegram notifications
+- Dashboard
+- Health monitoring
+- Metrics collection
+
+---
+
+## Design Principles
+
+The architecture follows these principles:
+
+### Reliability
+
+Recording must continue even if one subsystem fails.
+
+---
+
+### Simplicity
+
+The system avoids unnecessary complexity.
+
+---
+
+### Isolation
+
+Each recording service operates independently.
+
+---
+
+### Automation
+
+Routine maintenance is fully automated whenever possible.
+
+---
+
+### Recoverability
+
+All critical services restart automatically after failures.
+
+---
+
+### Documentation
+
+Every significant architectural decision must be documented.
+
+---
+
+## Data Flow
+
+```text
+RTSP Camera
+      │
+      ▼
+FFmpeg Recorder
+      │
+      ▼
+MKV File
+      │
+      ▼
+Archive Storage
+      │
+      ▼
+Disk Usage Monitoring
+      │
+      ▼
+Automatic Cleanup
+      │
+      ▼
+Email Notification
+```
+
+---
+
+## Technology Stack
+
+| Layer | Technology |
+|--------|------------|
+| Operating System | Ubuntu Server |
+| Recording | FFmpeg |
+| Streaming | RTSP |
+| Video Codec | H.265 (HEVC) |
+| Container | MKV |
+| Service Manager | systemd |
+| Automation | Bash |
+| Notifications | Python |
+| Version Control | Git |
+| Repository | GitHub |
+
+---
+
+## Future Architecture
+
+Planned improvements:
+
+- Telegram notifications
+- Central monitoring dashboard
+- Backup automation
+- Health checks
+- Metrics collection
+- Additional cameras
+- Configuration management
+
+---
+
+## Related Documents
+
+| Document | Description |
+|----------|-------------|
+| 01-server-passport.md | Server Passport |
+| 03-camera-configuration.md | Camera Configuration |
+| 04-storage.md | Storage |
+| 05-services.md | Services |
+| 06-scripts.md | Scripts |
+| 07-monitoring.md | Monitoring |
+| 08-maintenance.md | Maintenance |
+| 09-disaster-recovery.md | Disaster Recovery |
+| 10-architecture-decision-records.md | Architecture Decision Records |
+
+---
+
+## Change History
+
+| Version | Date | Description |
+|----------|------------|-------------------------------|
+| 1.0 | 2026-07-31 | Initial architecture document created |
