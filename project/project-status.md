@@ -4,19 +4,19 @@
 |----------|-------|
 | **Project** | ProPilRybu |
 | **Current Version** | 1.0 |
-| **Status** | 🟢 Active Development |
-| **Current Milestone** | CP-004 |
+| **Status** | 🟢 Documentation Complete |
+| **Current Milestone** | CP-005 |
 | **Last Updated** | 2026-07-31 |
 
 ---
 
 # Current State
 
-The project has completed the documentation foundation phase.
+The first official version of the ProPilRybu technical documentation has been completed.
 
-The documentation standard has been approved and the repository structure has been established.
+The repository now contains a complete documentation set covering the CCTV server architecture, storage, services, automation, monitoring, maintenance and disaster recovery.
 
-Current work is focused on documenting the CCTV server architecture and infrastructure.
+The project is ready to begin the next development phase (v1.1).
 
 ---
 
@@ -27,83 +27,49 @@ Current work is focused on documenting the CCTV server architecture and infrastr
 | CP-001 | ✅ | Repository structure created |
 | CP-002 | ✅ | Documentation foundation created |
 | CP-003 | ✅ | Documentation standard approved |
-| CP-004 | ✅ | Architecture documentation started |
+| CP-004 | ✅ | Technical documentation initiated |
+| CP-005 | ✅ | Documentation v1.0 completed |
 
 ---
 
 # Current Tasks
 
-- [ ] Complete `03-camera-configuration.md`
-- [ ] Complete `04-storage.md`
-- [ ] Complete `05-services.md`
-- [ ] Create architecture diagrams
-- [ ] Document all systemd services
-- [ ] Document automation scripts
+- Review documentation after operational changes.
+- Maintain Architecture Decision Records (ADR).
+- Keep documentation synchronized with the production server.
+- Plan features for version 1.1.
 
 ---
 
 # Upcoming Milestones
 
-## CP-005
-
-Camera configuration
-
-Storage subsystem
-
-Architecture diagrams
-
----
-
 ## CP-006
 
-Monitoring
+Infrastructure Improvements
 
-Maintenance
+Possible objectives:
 
-Disaster Recovery
+- Operational Runbook
+- Architecture diagrams
+- Aggregated camera service
+- Monitoring improvements
+- Documentation refinement
 
 ---
 
 # Current CCTV Configuration
 
-## Operating System
-
-Ubuntu Server
-
-## Recording
-
-FFmpeg
-
-## Cameras
-
-- Bahus
-- LaVanda
-- Salon
-
-## Storage
-
-Mount point:
-
-```text
-/home/ftpuser/Videos
-```
-
-Disk:
-
-```text
-/ dev/sdb
-```
-
-Current size:
-
-**150 GB**
-
-Cleanup policy:
-
-```text
-START_LIMIT = 90%
-TARGET_LIMIT = 85%
-```
+| Component | Value |
+|----------|-------|
+| Operating System | Ubuntu Server |
+| Recording Engine | FFmpeg |
+| Recording Format | MKV |
+| Cameras | Bahus, LaVanda, Salon |
+| Storage | `/home/ftpuser/Videos` |
+| Filesystem | ext4 |
+| Storage Device | `/dev/sdb` |
+| Capacity | 150 GB |
+| Cleanup Policy | START_LIMIT=90%, TARGET_LIMIT=85% |
 
 ---
 
@@ -114,30 +80,33 @@ docs/
 images/
 project/
 scripts/
+README.md
+LICENSE.txt
 ```
 
 ---
 
 # Notes
 
-The documentation template (`docs/00-document-template.md`) is officially adopted as Documentation Standard v1.0.
+The documentation template (`docs/00-document-template.md`) is the official documentation standard for the project.
 
-Future documentation should follow this standard.
+All future documentation shall follow this standard.
 
 ---
 
 # Next Session
 
-Continue with:
+Planned work:
 
-```text
-03-camera-configuration.md
-```
+- Begin development of version 1.1.
+- Improve operational tooling.
+- Expand project documentation where required.
 
 ---
 
 # Change History
 
 | Version | Date | Description |
-|----------|------------|------------------------------|
+|----------|------------|-------------------------------|
 | 1.0 | 2026-07-31 | Initial project status created |
+| 1.1 | 2026-07-31 | Updated after completion of Documentation v1.0 (CP-005) |
