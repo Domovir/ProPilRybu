@@ -1,3 +1,31 @@
+---
+title: System Architecture
+document: 02-system-architecture
+version: 1.0
+status: Draft
+owner: ProPilRybu
+created: 2026-07-31
+updated: 2026-07-31
+reviewed:
+next_review: 2027-01-31
+category: Architecture
+tags:
+  - architecture
+  - cctv
+  - rtsp
+  - ffmpeg
+  - systemd
+related:
+  - 01-server-passport.md
+  - 03-camera-configuration.md
+  - 04-storage.md
+  - 05-services.md
+  - 06-scripts.md
+  - 07-monitoring.md
+  - 08-maintenance.md
+  - 09-disaster-recovery.md
+---
+
 # Архитектура системы ProPilRybu
 
 ## 1. Назначение документа
