@@ -59,3 +59,19 @@ This document covers:
 | 10-architecture-decision-records.md | Architecture Decision Records |
 
 ---
+
+## Related Documents
+
+| Document | Description |
+|----------|-------------|
+| 02-system-architecture.md | System architecture |
+| 03-camera-configuration.md | Camera configuration |
+| 04-storage.md | Storage subsystem |
+
+---
+
+## Change History
+
+| Version | Date | Description |
+|----------|------------|-------------------------------|
+| 1.0 | 2026-07-31 | Initial document created |
