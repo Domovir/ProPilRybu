@@ -1,5 +1,7 @@
+---
 Document: 01-server-passport.md
 Title: Server Passport
+Category: Documentation
 Project: ProPilRybu
 Version: 1.0
 Status: Production
@@ -9,10 +11,9 @@ Created: 2026-07-31
 Last Updated: 2026-07-31
 Reviewed: —
 Next Review: 2026-10-31
-```
-
-
 ---
+
+# Server Passport
 
 # Purpose
 
