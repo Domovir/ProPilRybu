@@ -1,22 +1,26 @@
 #!/bin/bash
+
+###############################################################################
+# ProPilRybu
 #
-# ==============================================================================
-# ProPilRybu - Universal RTSP Recorder
-# ==============================================================================
+# Script:
+#   record_rtsp.sh
 #
 # Description:
-#   Universal recording engine for RTSP cameras.
+#   Universal RTSP recording engine.
 #
-# Configuration:
-#   record_rtsp.sh <config-file>
-#
-# Example:
-#   record_rtsp.sh /etc/propilrybu/bahus.conf
+# Usage:
+#   record_rtsp.sh /etc/propilrybu/<camera>.conf
 #
 # Version:
-#   1.1
+#   1.2
 #
-# ==============================================================================
+# License:
+#   MIT
+###############################################################################
+
+SCRIPT_NAME="record_rtsp.sh"
+SCRIPT_VERSION="1.2"
 
 set -euo pipefail
 
