@@ -4,19 +4,21 @@
 |----------|-------|
 | **Project** | ProPilRybu |
 | **Current Version** | 1.0 |
-| **Status** | 🟢 Documentation Complete |
-| **Current Milestone** | CP-005 |
-| **Last Updated** | 2026-07-31 |
+| **Status** | 🟢 Active Development |
+| **Current Milestone** | CP-007 |
+| **Last Updated** | 2026-08-02 |
 
 ---
 
 # Current State
 
-The first official version of the ProPilRybu technical documentation has been completed.
+The project documentation foundation has been completed.
 
-The repository now contains a complete documentation set covering the CCTV server architecture, storage, services, automation, monitoring, maintenance and disaster recovery.
+The repository structure, documentation standards, and operational documentation for the CCTV server have been created and approved.
 
-The project is ready to begin the next development phase (v1.1).
+The current production system is stable and fully operational.
+
+A prototype of the Universal RTSP Recorder has been successfully tested. The migration to the new architecture has been postponed until the design documentation and testing strategy are completed.
 
 ---
 
@@ -27,86 +29,92 @@ The project is ready to begin the next development phase (v1.1).
 | CP-001 | ✅ | Repository structure created |
 | CP-002 | ✅ | Documentation foundation created |
 | CP-003 | ✅ | Documentation standard approved |
-| CP-004 | ✅ | Technical documentation initiated |
-| CP-005 | ✅ | Documentation v1.0 completed |
+| CP-004 | ✅ | Core infrastructure documentation completed |
+| CP-005 | ✅ | Operational documentation completed |
+| CP-006 | ✅ | Universal RTSP Recorder design approved |
 
 ---
 
 # Current Tasks
 
-- Review documentation after operational changes.
-- Maintain Architecture Decision Records (ADR).
-- Keep documentation synchronized with the production server.
-- Plan features for version 1.1.
+- Create **11-universal-recorder-design.md**
+- Define Universal Recorder architecture
+- Define configuration file format
+- Define logging strategy
+- Define migration strategy
+- Prepare isolated testing environment
 
 ---
 
 # Upcoming Milestones
 
-## CP-006
+## CP-007
 
-Infrastructure Improvements
+- Universal Recorder Design
+- Configuration Specification
+- Logging Architecture
+- Migration Plan
+- Test Strategy
 
-Possible objectives:
+## CP-008
 
-- Operational Runbook
-- Architecture diagrams
-- Aggregated camera service
-- Monitoring improvements
-- Documentation refinement
+- Universal Recorder implementation
+- Laboratory testing
+- systemd integration
+- Production rollout
 
 ---
 
 # Current CCTV Configuration
 
 | Component | Value |
-|----------|-------|
+|-----------|-------|
 | Operating System | Ubuntu Server |
 | Recording Engine | FFmpeg |
-| Recording Format | MKV |
 | Cameras | Bahus, LaVanda, Salon |
-| Storage | `/home/ftpuser/Videos` |
-| Filesystem | ext4 |
-| Storage Device | `/dev/sdb` |
-| Capacity | 150 GB |
-| Cleanup Policy | START_LIMIT=90%, TARGET_LIMIT=85% |
+| Service Manager | systemd |
+| Storage | /home/ftpuser/Videos |
+| Recording Format | MKV |
+| Segment Length | 300 seconds |
+| Cleanup Policy | START_LIMIT = 90%, TARGET_LIMIT = 85% |
 
 ---
 
 # Repository Structure
 
-```text
-docs/
-images/
-project/
-scripts/
-README.md
-LICENSE.txt
+```
+ProPilRybu/
+│
+├── docs/
+├── images/
+├── project/
+├── scripts/
+└── README.md
 ```
 
 ---
 
 # Notes
 
-The documentation template (`docs/00-document-template.md`) is the official documentation standard for the project.
+The production recording system is stable.
 
-All future documentation shall follow this standard.
+Development of the Universal RTSP Recorder is performed separately from the production environment.
+
+Migration to the new recorder will begin only after the design documentation and testing plan have been completed and approved.
 
 ---
 
 # Next Session
 
-Planned work:
+Continue with:
 
-- Begin development of version 1.1.
-- Improve operational tooling.
-- Expand project documentation where required.
+**docs/11-universal-recorder-design.md**
 
 ---
 
 # Change History
 
 | Version | Date | Description |
-|----------|------------|-------------------------------|
+|----------|------|-------------|
 | 1.0 | 2026-07-31 | Initial project status created |
-| 1.1 | 2026-07-31 | Updated after completion of Documentation v1.0 (CP-005) |
+| 1.1 | 2026-08-02 | Updated after completion of CP-006 |
