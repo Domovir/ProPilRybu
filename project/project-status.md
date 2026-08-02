@@ -3,22 +3,22 @@
 | Property | Value |
 |----------|-------|
 | **Project** | ProPilRybu |
-| **Current Version** | 1.0 |
+| **Current Version** | 1.1 |
 | **Status** | 🟢 Active Development |
-| **Current Milestone** | CP-007 |
+| **Current Milestone** | CP-006 |
 | **Last Updated** | 2026-08-02 |
 
 ---
 
 # Current State
 
-The project documentation foundation has been completed.
+The documentation and architecture phases have been successfully completed.
 
-The repository structure, documentation standards, and operational documentation for the CCTV server have been created and approved.
+The project has entered the implementation phase.
 
-The current production system is stable and fully operational.
+The Universal RTSP Recorder architecture has been approved, the initial implementation has been created, configuration templates have been prepared and development standards have been established.
 
-A prototype of the Universal RTSP Recorder has been successfully tested. The migration to the new architecture has been postponed until the design documentation and testing strategy are completed.
+Current work is focused on improving the recorder implementation, validating functionality through testing and preparing for production deployment.
 
 ---
 
@@ -29,20 +29,21 @@ A prototype of the Universal RTSP Recorder has been successfully tested. The mig
 | CP-001 | ✅ | Repository structure created |
 | CP-002 | ✅ | Documentation foundation created |
 | CP-003 | ✅ | Documentation standard approved |
-| CP-004 | ✅ | Core infrastructure documentation completed |
-| CP-005 | ✅ | Operational documentation completed |
-| CP-006 | ✅ | Universal RTSP Recorder design approved |
+| CP-004 | ✅ | Architecture documentation completed |
+| CP-005 | ✅ | Complete technical documentation finished |
+| CP-006 | ✅ | Implementation Phase Started |
 
 ---
 
 # Current Tasks
 
-- Create **11-universal-recorder-design.md**
-- Define Universal Recorder architecture
-- Define configuration file format
-- Define logging strategy
-- Define migration strategy
-- Prepare isolated testing environment
+- Improve `record_rtsp.sh`
+- Implement unified logging
+- Improve error handling
+- Validate against Shell Scripting Standard
+- Execute Universal Recorder Test Plan
+- Prepare production deployment
+- Migrate Bahus to Universal Recorder
 
 ---
 
@@ -50,18 +51,25 @@ A prototype of the Universal RTSP Recorder has been successfully tested. The mig
 
 ## CP-007
 
-- Universal Recorder Design
-- Configuration Specification
-- Logging Architecture
-- Migration Plan
-- Test Strategy
+- Universal Recorder Version 1.2
+- Complete laboratory testing
+- Validate systemd integration
+
+---
 
 ## CP-008
 
-- Universal Recorder implementation
-- Laboratory testing
-- systemd integration
-- Production rollout
+- Production deployment
+- Bahus migration completed
+- Production validation
+
+---
+
+## CP-009
+
+- LaVanda migration
+- Salon migration
+- Legacy recorder removal
 
 ---
 
@@ -72,35 +80,38 @@ A prototype of the Universal RTSP Recorder has been successfully tested. The mig
 | Operating System | Ubuntu Server |
 | Recording Engine | FFmpeg |
 | Cameras | Bahus, LaVanda, Salon |
-| Service Manager | systemd |
 | Storage | /home/ftpuser/Videos |
 | Recording Format | MKV |
-| Segment Length | 300 seconds |
+| Segment Duration | 300 seconds |
 | Cleanup Policy | START_LIMIT = 90%, TARGET_LIMIT = 85% |
 
 ---
 
 # Repository Structure
 
-```
-ProPilRybu/
-│
-├── docs/
-├── images/
-├── project/
-├── scripts/
-└── README.md
+```text
+docs/
+configs/
+images/
+project/
+scripts/
+README.md
+LICENSE
+.gitignore
 ```
 
 ---
 
-# Notes
+# Project Standards
 
-The production recording system is stable.
+The following project standards are officially adopted:
 
-Development of the Universal RTSP Recorder is performed separately from the production environment.
+- Documentation Standard
+- Shell Scripting Standard
+- Universal Recorder Design Specification
+- Universal Recorder Test Plan
 
-Migration to the new recorder will begin only after the design documentation and testing plan have been completed and approved.
+All future development shall comply with these standards.
 
 ---
 
@@ -108,7 +119,10 @@ Migration to the new recorder will begin only after the design documentation and
 
 Continue with:
 
-**docs/11-universal-recorder-design.md**
+- record_rtsp.sh Version 1.2
+- Logging framework
+- Error handling improvements
+- Laboratory testing
 
 ---
 
@@ -117,4 +131,4 @@ Continue with:
 | Version | Date | Description |
 |----------|------|-------------|
 | 1.0 | 2026-07-31 | Initial project status created |
-| 1.1 | 2026-08-02 | Updated after completion of CP-006 |
+| 1.1 | 2026-08-02 | Documentation phase completed. CP-006 reached. Implementation phase started. |
