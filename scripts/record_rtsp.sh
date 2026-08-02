@@ -13,26 +13,39 @@
 # Example:
 #   record_rtsp.sh /etc/propilrybu/bahus.conf
 #
-# Project:
-#   ProPilRybu
-#
-# License:
-#   MIT
-#
 # Version:
-#   1.0
+#   1.1
 #
 # ==============================================================================
 
 set -euo pipefail
 
 # ------------------------------------------------------------------------------
+# Logging functions
+# ------------------------------------------------------------------------------
+
+log() {
+    local level="$1"
+    local message="$2"
+
+    echo "[$level] $message"
+    logger -t "record_rtsp" "[$level] $message"
+}
+
+die() {
+    local code="$1"
+    local message="$2"
+
+    log "ERROR" "$message"
+    exit "$code"
+}
+
+# ------------------------------------------------------------------------------
 # Check command line arguments
 # ------------------------------------------------------------------------------
 
 if [[ $# -ne 1 ]]; then
-    echo "Usage: $(basename "$0") <config-file>"
-    exit 1
+    die 1 "Usage: $(basename "$0") <config-file>"
 fi
 
 CONFIG_FILE="$1"
@@ -42,9 +55,7 @@ CONFIG_FILE="$1"
 # ------------------------------------------------------------------------------
 
 if [[ ! -f "$CONFIG_FILE" ]]; then
-    echo "ERROR: Configuration file not found:"
-    echo "  $CONFIG_FILE"
-    exit 2
+    die 2 "Configuration file not found: $CONFIG_FILE"
 fi
 
 # ------------------------------------------------------------------------------
@@ -72,24 +83,25 @@ FFMPEG_BIN="${FFMPEG_BIN:-/usr/bin/ffmpeg}"
 # ------------------------------------------------------------------------------
 
 if [[ ! -x "$FFMPEG_BIN" ]]; then
-    echo "ERROR: FFmpeg not found:"
-    echo "  $FFMPEG_BIN"
-    exit 3
+    die 3 "FFmpeg binary not found: $FFMPEG_BIN"
 fi
 
 # ------------------------------------------------------------------------------
 # Create output directory
 # ------------------------------------------------------------------------------
 
-mkdir -p "$OUTPUT_DIR"
+if [[ ! -d "$OUTPUT_DIR" ]]; then
+    mkdir -p "$OUTPUT_DIR"
+    log "INFO" "Created output directory: $OUTPUT_DIR"
+fi
 
 # ------------------------------------------------------------------------------
 # Start recording
 # ------------------------------------------------------------------------------
 
-echo "Starting recorder:"
-echo "  Camera : $CAMERA_NAME"
-echo "  Output : $OUTPUT_DIR"
+log "INFO" "Starting recorder for camera: $CAMERA_NAME"
+log "INFO" "Output directory: $OUTPUT_DIR"
+log "INFO" "Segment time: ${SEGMENT_TIME}s"
 
 exec "$FFMPEG_BIN" \
     -hide_banner \
