@@ -1,0 +1,28 @@
+###############################################################################
+# ProPilRybu
+# Example Camera Configuration
+#
+# Camera: Salon
+#
+# NOTE:
+# This is an example configuration.
+# Replace placeholder values before using in production.
+###############################################################################
+
+# Camera name
+CAMERA_NAME="Salon"
+
+# RTSP stream URL
+RTSP_URL="rtsp://admin:YOUR_PASSWORD@moryachok.ddns.net:5544/cam/realmonitor?channel=1&subtype=0"
+
+# Output directory
+OUTPUT_DIR="/home/ftpuser/Videos/Salon"
+
+# Recording segment length (seconds)
+SEGMENT_TIME=300
+
+# FFmpeg log level
+LOG_LEVEL="warning"
+
+# FFmpeg executable
+FFMPEG_BIN="/usr/bin/ffmpeg"

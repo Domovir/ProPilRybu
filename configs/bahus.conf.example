@@ -1,0 +1,28 @@
+###############################################################################
+# ProPilRybu
+# Example Camera Configuration
+#
+# Camera: Bahus
+#
+# NOTE:
+# This is an example configuration.
+# Replace placeholder values before using in production.
+###############################################################################
+
+# Camera name
+CAMERA_NAME="Bahus"
+
+# RTSP stream URL
+RTSP_URL="rtsp://admin:YOUR_PASSWORD@bahus.ddns.net:554/11"
+
+# Output directory
+OUTPUT_DIR="/home/ftpuser/Videos/Bahus"
+
+# Recording segment length (seconds)
+SEGMENT_TIME=300
+
+# FFmpeg log level
+LOG_LEVEL="warning"
+
+# FFmpeg executable
+FFMPEG_BIN="/usr/bin/ffmpeg"

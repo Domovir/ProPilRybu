@@ -1,0 +1,28 @@
+###############################################################################
+# ProPilRybu
+# Example Camera Configuration
+#
+# Camera: LaVanda
+#
+# NOTE:
+# This is an example configuration.
+# Replace placeholder values before using in production.
+###############################################################################
+
+# Camera name
+CAMERA_NAME="LaVanda"
+
+# RTSP stream URL
+RTSP_URL="rtsp://admin:YOUR_PASSWORD@moryachok.ddns.net:5555/cam/realmonitor?channel=1&subtype=0"
+
+# Output directory
+OUTPUT_DIR="/home/ftpuser/Videos/LaVanda"
+
+# Recording segment length (seconds)
+SEGMENT_TIME=300
+
+# FFmpeg log level
+LOG_LEVEL="warning"
+
+# FFmpeg executable
+FFMPEG_BIN="/usr/bin/ffmpeg"
