@@ -44,6 +44,13 @@ die() {
     exit "$code"
 }
 
+require_var() {
+    local var="$1"
+
+    if [[ -z "${!var:-}" ]]; then
+        die 2 "Required configuration variable '$var' is missing."
+    fi
+}
 # ------------------------------------------------------------------------------
 # Check command line arguments
 # ------------------------------------------------------------------------------
@@ -68,13 +75,13 @@ fi
 
 source "$CONFIG_FILE"
 
-# ------------------------------------------------------------------------------
-# Validate required configuration
-# ------------------------------------------------------------------------------
+###############################################################################
+# Configuration Validation
+###############################################################################
 
-: "${CAMERA_NAME:?CAMERA_NAME is not defined}"
-: "${RTSP_URL:?RTSP_URL is not defined}"
-: "${OUTPUT_DIR:?OUTPUT_DIR is not defined}"
+require_var CAMERA_NAME
+require_var RTSP_URL
+require_var OUTPUT_DIR
 
 # Optional parameters
 
