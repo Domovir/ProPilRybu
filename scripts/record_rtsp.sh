@@ -22,6 +22,9 @@
 SCRIPT_NAME="record_rtsp.sh"
 SCRIPT_VERSION="1.2"
 
+show_help()
+show_version()
+
 set -euo pipefail
 
 ###############################################################################
@@ -51,6 +54,21 @@ require_var() {
         die 2 "Required configuration variable '$var' is missing."
     fi
 }
+
+###############################################################################
+# Command Line Options
+###############################################################################
+
+case "${1:-}" in
+    --help|-h)
+        show_help
+        exit 0
+        ;;
+    --version|-v)
+        show_version
+        exit 0
+        ;;
+esac
 
 ###############################################################################
 # Argument Processing
