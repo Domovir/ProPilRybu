@@ -13,14 +13,14 @@
 #   record_rtsp.sh /etc/propilrybu/<camera>.conf
 #
 # Version:
-#   1.2
+#   1.3
 #
 # License:
 #   MIT
 ###############################################################################
 
 SCRIPT_NAME="record_rtsp.sh"
-SCRIPT_VERSION="1.2"
+SCRIPT_VERSION="1.3"
 
 show_help()
 show_version()
