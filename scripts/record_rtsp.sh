@@ -22,9 +22,6 @@
 SCRIPT_NAME="record_rtsp.sh"
 SCRIPT_VERSION="1.3"
 
-show_help()
-show_version()
-
 set -euo pipefail
 
 ###############################################################################
@@ -54,6 +51,50 @@ require_var() {
         die 2 "Required configuration variable '$var' is missing."
     fi
 }
+
+###############################################################################
+# Utility Functions
+###############################################################################
+
+show_version() {
+    echo "$SCRIPT_NAME version $SCRIPT_VERSION"
+}
+
+show_help() {
+    cat <<EOF
+==============================================================================
+ProPilRybu - Universal RTSP Recorder
+==============================================================================
+
+Version:
+$SCRIPT_VERSION
+
+Usage:
+    $SCRIPT_NAME <configuration-file>
+
+Options:
+    -h, --help       Show this help message
+    -v, --version    Show recorder version
+
+Example:
+    $SCRIPT_NAME /etc/propilrybu/bahus.conf
+
+Description:
+    Universal recording engine for RTSP cameras using FFmpeg.
+
+EOF
+}
+
+###############################################################################
+# Signal Handling
+###############################################################################
+
+cleanup() {
+    log "INFO" "Stop signal received. Shutting down recorder."
+    exit 0
+}
+
+trap cleanup SIGINT SIGTERM
 
 ###############################################################################
 # Command Line Options
