@@ -1,0 +1,9 @@
+# Unix line endings for shell scripts
+*.sh text eol=lf
+
+# Unix line endings for systemd units
+*.service text eol=lf
+
+# Markdown and configuration files
+*.md text eol=lf
+*.conf text eol=lf

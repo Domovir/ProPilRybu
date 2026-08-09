@@ -157,7 +157,7 @@ if [[ ! -x "$FFMPEG_BIN" ]]; then
 fi
 
 "$FFMPEG_BIN" -version >/dev/null 2>&1 \
-    || die 3 "FFmpeg is not operational."
+    die 3 "FFmpeg is not operational."
 
 ###############################################################################
 # Output Directory Initialization
