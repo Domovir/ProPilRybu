@@ -34,6 +34,13 @@ The production system remains unchanged and continues to use the existing produc
 
 The current work is focused on systemd integration and preparation for controlled production migration.
 
+- produced 60-second segments;
+- produced a valid MKV segment verified with FFprobe;
+- validated 300-second production segment generation;
+- verified consecutive 300-second segment boundaries;
+- verified monotonic DTS within the tested video and audio streams;
+- handled SIGTERM correctly and terminated the test recording process cleanly.
+
 ---
 
 ## Completed Milestones
