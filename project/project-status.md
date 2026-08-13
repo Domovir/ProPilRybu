@@ -1,106 +1,105 @@
+| Property | Value |
+|----------|-------|
+| **Document** | project-status.md |
+| **Title** | Project Status |
+| **Category** | Project Management |
+| **Project** | ProPilRybu |
+| **Version** | 1.0 |
+| **Status** | 🟢 Active |
+| **Owner** | Domovir |
+| **Maintainer** | Domovir |
+| **Repository** | https://github.com/Domovir/ProPilRybu |
+| **License** | MIT |
+| **Created** | 2026-07-31 |
+| **Last Updated** | 2026-08-12 |
+| **Reviewed** | — |
+| **Next Review** | 2026-11-12 |
+
+---
+
+> **Official Project Notice**
+>
+> This document defines the current status and milestones of the ProPilRybu project.
+
 # Project Status
 
-## Project Metadata
+## Purpose
 
-| Property | Value |
-|---|---|
-| Project | ProPilRybu |
-| Current Version | 1.3 |
-| Status | 🟢 Active Development |
-| Current Milestone | CP-008 |
-| Last Updated | 2026-08-09 |
+Provide a concise overview of the current project state, completed milestones
+and planned work.
 
----
+## Scope
 
-## Current State
-
-The documentation and architecture phases have been successfully completed.
-
-The Universal RTSP Recorder Version 1.3 has successfully completed laboratory validation.
-
-The recorder was validated using a dedicated test configuration and successfully:
-
-- loaded the configuration file;
-- validated required parameters;
-- executed under the `ftpuser` account;
-- connected to the Bahus RTSP stream;
-- produced valid MKV recordings;
-- recorded HEVC video and PCM A-law audio;
-- produced 60-second segments;
-- produced a valid MKV segment verified with FFprobe;
-- handled SIGTERM correctly and terminated the test recording process cleanly.
-
-The production system remains unchanged and continues to use the existing production recorder processes for Bahus, LaVanda and Salon.
-
-The current work is focused on systemd integration and preparation for controlled production migration.
-
-- produced 60-second segments;
-- produced a valid MKV segment verified with FFprobe;
-- validated 300-second production segment generation;
-- verified consecutive 300-second segment boundaries;
-- verified monotonic DTS within the tested video and audio streams;
-- handled SIGTERM correctly and terminated the test recording process cleanly.
+This document covers project milestones, current phase and planned work.
 
 ---
 
-## Completed Milestones
+## Current Status
 
-| ID | Status | Description |
-|---|---|---|
-| CP-001 | ✅ | Repository structure created |
-| CP-002 | ✅ | Documentation foundation created |
-| CP-003 | ✅ | Documentation standard approved |
-| CP-004 | ✅ | Architecture documentation completed |
-| CP-005 | ✅ | Complete technical documentation finished |
-| CP-006 | ✅ | Implementation Phase Started |
-| CP-007 | ✅ | Universal RTSP Recorder Framework |
-| CP-008 | ✅ | Universal RTSP Recorder 1.3 laboratory validation |
+**🟢 Active Development**
+
+The Universal RTSP Recorder has been implemented and deployed to the
+production recording services for Bahus, LaVanda and Salon.
+
+The project is currently in the **Production Observation and Stabilization**
+phase.
 
 ---
 
-## Current Tasks
+## Project Milestones
 
-- Validate systemd integration
-- Prepare production deployment
-- Prepare controlled Bahus migration
-
----
-
-## Upcoming Milestones
-
-| ID | Milestone |
-|---|---|
-| CP-009 | Bahus production migration |
-| CP-010 | LaVanda production migration |
-| CP-011 | Salon production migration |
-| CP-012 | Legacy recorder retirement |
-
----
-
-## Current CCTV Configuration
-
-| Component | Value |
-|---|---|
-| Operating System | Ubuntu Server |
-| Recording Engine | FFmpeg |
-| Cameras | Bahus, LaVanda, Salon |
-| Storage | `/home/ftpuser/Videos` |
-| Recording Format | MKV |
-| Segment Duration | 300 seconds |
-| Cleanup Policy | `START_LIMIT = 90%`, `TARGET_LIMIT = 85%` |
-
-> Note: The 60-second segment duration was used only for laboratory validation with the dedicated `test.conf`. Production recording remains configured for 300-second segments.
+| ID | Name | Status | Date |
+|----|------|--------|------|
+| CP-001 | Repository Foundation | ✅ Completed | 2026-07-31 |
+| CP-002 | Documentation Foundation | ✅ Completed | 2026-07-31 |
+| CP-003 | Documentation Standard | ✅ Completed | 2026-07-31 |
+| CP-004 | Architecture Documentation | ✅ Completed | 2026-07-31 |
+| CP-005 | Infrastructure Documentation | ✅ Completed | 2026-07-31 |
+| CP-006 | Universal Recorder Documentation | ✅ Completed | 2026-08-02 |
+| CP-007 | Universal RTSP Recorder Framework | ✅ Completed | 2026-08-04 |
+| CP-008 | Laboratory Validation | ✅ Completed | 2026-08-12 |
+| CP-009 | Production Deployment — Bahus | ✅ Completed | 2026-08-12 |
+| CP-010 | Production Deployment — LaVanda | ✅ Completed | 2026-08-12 |
+| CP-011 | Production Deployment — Salon | ✅ Completed | 2026-08-12 |
+| CP-012 | Legacy Recorder Retirement | 🟡 Planned | — |
 
 ---
 
-## Repository Structure
+## Current Phase
 
-```text
-docs/
-configs/
-images/
-project/
-scripts/
-README.md
-LICENSE
-.gitignore
+**Production Observation and Stabilization**
+
+Primary objective:
+
+- verify long-term recording stability;
+- monitor generated files;
+- confirm service recovery behaviour;
+- complete the transition from legacy recorder scripts.
+
+---
+
+## Next Steps
+
+1. Observe all three production recorders.
+2. Verify long-term recording stability.
+3. Retire legacy recorder scripts after successful observation.
+4. Update project documentation.
+
+---
+
+## Related Documents
+
+- `00-document-template.md`
+- `milestones.md`
+- `11-universal-recorder-design.md`
+- `12-universal-recorder-test-plan.md`
+- `13-shell-scripting-standard.md`
+- `14-universal-recorder-specification.md`
+
+---
+
+## Change History
+
+| Version | Date | Description |
+|---------|------|-------------|
+| 1.0 | 2026-08-12 | Updated project status after Universal RTSP Recorder production deployment. |
