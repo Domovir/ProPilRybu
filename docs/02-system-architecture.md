@@ -1,304 +1,224 @@
-| Property | Value |
-|----------|-------|
-| **Document** | 02-system-architecture.md |
-| **Title** | System Architecture |
-| **Category** | Architecture |
-| **Project** | ProPilRybu |
-| **Version** | 1.0 |
-| **Status** | 🟢 Production |
-| **Owner** | Domovir |
-| **Maintainer** | Domovir |
-| **Repository** | https://github.com/Domovir/ProPilRybu |
-| **License** | MIT |
-| **Created** | 2026-07-31 |
-| **Last Updated** | 2026-07-31 |
-| **Reviewed** | — |
-| **Next Review** | 2026-10-31 |
+| Property         | Value                                 |
+| ---------------- | ------------------------------------- |
+| **Document**     | 02-system-architecture.md             |
+| **Title**        | System Architecture                   |
+| **Category**     | Architecture                          |
+| **Project**      | ProPilRybu                            |
+| **Version**      | 1.1                                   |
+| **Status**       | 🟢 Production                         |
+| **Owner**        | Domovir                               |
+| **Maintainer**   | Domovir                               |
+| **Repository**   | https://github.com/Domovir/ProPilRybu |
+| **License**      | MIT                                   |
+| **Created**      | 2026-07-31                            |
+| **Last Updated** | 2026-08-13                            |
+| **Reviewed**     | 2026-08-13                            |
+| **Next Review**  | 2026-11-13                            |
+
+---
 
 > **This document is part of the official technical documentation of the ProPilRybu project.**
 
 # System Architecture
 
----
-
 ## Purpose
 
-This document describes the overall architecture of the ProPilRybu CCTV recording system.
-
-It explains how system components interact, how video data flows through the platform, and the architectural principles used to ensure reliability, maintainability, and continuous operation.
-
----
+Describe the current architecture of the ProPilRybu CCTV recording system.
 
 ## Scope
 
-This document covers:
-
-- Overall system architecture
-- Video recording workflow
-- Storage architecture
-- Background services
-- Monitoring
-- Archive management
-- Design principles
+This document covers the main system components, recording flow, storage and service architecture.
 
 ---
 
 ## Architecture Overview
 
-The ProPilRybu platform is designed as a modular CCTV recording system based on Ubuntu Server and open-source technologies.
+ProPilRybu is an Ubuntu Server based CCTV recording system.
 
-Each subsystem has a single responsibility and communicates through well-defined interfaces.
-
-Main architectural goals:
-
-- Continuous 24×7 operation
-- Fault isolation
-- Simple maintenance
-- Automatic recovery
-- Minimal dependencies
-- High reliability
+The current architecture uses a single universal RTSP recording engine with separate configuration files for each camera.
 
 ---
 
-## High-Level Architecture
-
-```text
-                +----------------------+
-                |      IP Cameras      |
-                +----------+-----------+
-                           |
-                           | RTSP
-                           v
-                +----------------------+
-                |        FFmpeg        |
-                | Recording Services   |
-                +----------+-----------+
-                           |
-                           | MKV files
-                           v
-                +----------------------+
-                | Video Archive        |
-                | /home/ftpuser/Videos |
-                +----------+-----------+
-                           |
-         +-----------------+-----------------+
-         |                                   |
-         v                                   v
-+---------------------+           +----------------------+
-| Cleanup Script      |           | Monitoring           |
-| cctv_cleanup.sh     |           | Logs / Email         |
-+----------+----------+           +----------+-----------+
-           |                                 |
-           +-----------------+---------------+
-                             |
-                             v
-                  System Administration
-```
-
----
-
-## System Components
+## Main Components
 
 ### Cameras
 
-The system currently records video from three independent cameras.
+The system currently records three cameras:
 
-- Bahus
-- LaVanda
-- Salon
+* Bahus
+* LaVanda
+* Salon
 
-Each camera records independently.
+Each camera is recorded by an independent systemd service.
 
-A failure of one camera does not interrupt recording from the others.
+### Recording Engine
 
----
-
-### Recording Layer
-
-Recording is performed using FFmpeg.
-
-Characteristics:
-
-- Direct RTSP recording
-- No video transcoding
-- HEVC (H.265) preserved
-- MKV container
-- Independent recording processes
-- Automatic restart through systemd
-
----
-
-### Storage Layer
-
-Video files are stored on a dedicated storage volume.
-
-Archive location:
+The common recording engine is:
 
 ```text
-/home/ftpuser/Videos
+/usr/local/bin/record_rtsp.sh
 ```
 
-Current layout:
+Camera-specific settings are stored in:
 
 ```text
-Videos/
+/etc/propilrybu/
+├── bahus.conf
+├── lavanda.conf
+└── salon.conf
+```
+
+The engine uses FFmpeg to receive RTSP streams and store recordings without video transcoding.
+
+### Service Layer
+
+Each camera has its own systemd service:
+
+```text
+bahus-rtsp.service
+lavanda-rtsp.service
+salon-rtsp.service
+```
+
+Each service starts the same recording engine with its corresponding configuration file.
+
+This provides independent operation and automatic restart.
+
+---
+
+## Recording Flow
+
+```text
+IP Camera
+    │
+    │ RTSP
+    ▼
+systemd camera service
+    │
+    ▼
+record_rtsp.sh
+    │
+    ▼
+FFmpeg
+    │
+    ▼
+MKV recording
+    │
+    ▼
+/home/ftpuser/Videos/<Camera>/
+```
+
+---
+
+## Storage Architecture
+
+Recordings are stored under:
+
+```text
+/home/ftpuser/Videos/
 ├── Bahus/
 ├── LaVanda/
 └── Salon/
 ```
 
-Each camera stores recordings in its own directory.
+Each camera uses a separate archive directory.
+
+Recordings are created as MKV segments with a configured segment duration.
 
 ---
 
-### Archive Management
+## Configuration
 
-Archive cleanup is performed automatically.
+Camera configuration is separated from the recording engine.
 
-Current policy:
+Example structure:
 
-- Start cleanup at 90% disk usage.
-- Stop cleanup at 85%.
-- Delete the oldest completed recordings first.
-- Never remove active recordings.
-- Remove empty directories.
-- Remove stale zero-byte MKV files.
+```text
+CAMERA_NAME
+RTSP_URL
+OUTPUT_DIR
+SEGMENT_TIME
+USE_WALLCLOCK
+```
+
+`USE_WALLCLOCK` controls whether FFmpeg uses wall-clock timestamps for the input stream.
+
+Current configuration:
+
+| Camera  | USE_WALLCLOCK |
+| ------- | ------------- |
+| Bahus   | 0             |
+| LaVanda | 1             |
+| Salon   | 1             |
 
 ---
 
-### Monitoring
+## Service Architecture
 
-Current monitoring includes:
+```text
+bahus-rtsp.service
+        │
+        └── record_rtsp.sh → bahus.conf
 
-- Disk usage
-- Cleanup logs
-- Email notifications
-- Service status
+lavanda-rtsp.service
+        │
+        └── record_rtsp.sh → lavanda.conf
 
-Future improvements:
+salon-rtsp.service
+        │
+        └── record_rtsp.sh → salon.conf
+```
 
-- Telegram notifications
-- Dashboard
-- Health monitoring
-- Metrics collection
+Services run under the `ftpuser` account and are configured for automatic restart.
+
+---
+
+## Archive Management
+
+Archive maintenance is handled separately from the recording engine.
+
+The recording subsystem is responsible for creating video files.
+
+Cleanup and storage management are performed by dedicated maintenance scripts.
+
+This separation prevents archive management logic from being coupled to the recording process.
 
 ---
 
 ## Design Principles
 
-The architecture follows these principles:
-
-### Reliability
-
-Recording must continue even if one subsystem fails.
-
----
-
-### Simplicity
-
-The system avoids unnecessary complexity.
-
----
-
-### Isolation
-
-Each recording service operates independently.
-
----
-
-### Automation
-
-Routine maintenance is fully automated whenever possible.
-
----
-
-### Recoverability
-
-All critical services restart automatically after failures.
-
----
-
-### Documentation
-
-Every significant architectural decision must be documented.
-
----
-
-## Data Flow
-
-```text
-RTSP Camera
-      │
-      ▼
-FFmpeg Recorder
-      │
-      ▼
-MKV File
-      │
-      ▼
-Archive Storage
-      │
-      ▼
-Disk Usage Monitoring
-      │
-      ▼
-Automatic Cleanup
-      │
-      ▼
-Email Notification
-```
-
----
-
-## Technology Stack
-
-| Layer | Technology |
-|--------|------------|
-| Operating System | Ubuntu Server |
-| Recording | FFmpeg |
-| Streaming | RTSP |
-| Video Codec | H.265 (HEVC) |
-| Container | MKV |
-| Service Manager | systemd |
-| Automation | Bash |
-| Notifications | Python |
-| Version Control | Git |
-| Repository | GitHub |
-
----
-
-## Future Architecture
-
-Planned improvements:
-
-- Telegram notifications
-- Central monitoring dashboard
-- Backup automation
-- Health checks
-- Metrics collection
-- Additional cameras
-- Configuration management
+* One universal recording engine.
+* Separate configuration for each camera.
+* Independent systemd services.
+* Direct RTSP recording.
+* No video transcoding.
+* Separate camera archives.
+* Automatic service restart.
+* Separation of recording and archive maintenance.
 
 ---
 
 ## Related Documents
 
-| Document | Description |
-|----------|-------------|
-| 01-server-passport.md | Server Passport |
-| 03-camera-configuration.md | Camera Configuration |
-| 04-storage.md | Storage |
-| 05-services.md | Services |
-| 06-scripts.md | Scripts |
-| 07-monitoring.md | Monitoring |
-| 08-maintenance.md | Maintenance |
-| 09-disaster-recovery.md | Disaster Recovery |
-| 10-architecture-decision-records.md | Architecture Decision Records |
+| Document                              | Description                   |
+| ------------------------------------- | ----------------------------- |
+| `00-document-template.md`             | Documentation Template        |
+| `01-server-passport.md`               | Server Passport               |
+| `03-camera-configuration.md`          | Camera Configuration          |
+| `04-storage.md`                       | Storage                       |
+| `05-services.md`                      | Services                      |
+| `06-scripts.md`                       | Scripts                       |
+| `07-monitoring.md`                    | Monitoring                    |
+| `08-maintenance.md`                   | Maintenance                   |
+| `09-disaster-recovery.md`             | Disaster Recovery             |
+| `10-architecture-decision-records.md` | Architecture Decision Records |
+| `project-status.md`                   | Project Status                |
 
 ---
 
 ## Change History
 
-| Version | Date | Description |
-|----------|------------|-------------------------------|
-| 1.0 | 2026-07-31 | Initial architecture document created |
+| Version | Date       | Description                                                   |
+| ------- | ---------- | ------------------------------------------------------------- |
+| 1.0     | 2026-07-31 | Initial architecture document created.                        |
+| 1.1     | 2026-08-13 | Architecture updated for the universal RTSP recording engine. |
