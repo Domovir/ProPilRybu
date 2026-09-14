@@ -1,31 +1,33 @@
+# Camera Configuration
+
 | Property | Value |
 |----------|-------|
 | **Document** | 03-camera-configuration.md |
 | **Title** | Camera Configuration |
 | **Category** | Configuration |
 | **Project** | ProPilRybu |
-| **Version** | 1.0 |
+| **Version** | 1.1 |
 | **Status** | 🟢 Production |
 | **Owner** | Domovir |
 | **Maintainer** | Domovir |
 | **Repository** | https://github.com/Domovir/ProPilRybu |
 | **License** | MIT |
 | **Created** | 2026-07-31 |
-| **Last Updated** | 2026-07-31 |
-| **Reviewed** | — |
-| **Next Review** | 2026-10-31 |
+| **Last Updated** | 2026-09-14 |
+| **Reviewed** | 2026-09-14 |
+| **Next Review** | 2026-12-14 |
 
 > **This document is part of the official technical documentation of the ProPilRybu project.**
 
-# Camera Configuration
-
 ---
+
+# Camera Configuration
 
 ## Purpose
 
-This document describes all CCTV cameras connected to the ProPilRybu recording server.
+This document describes the current CCTV camera configuration used by ProPilRybu.
 
-It includes recording parameters, archive locations, integration methods and operational notes.
+It defines camera sources, recording parameters, configuration files and archive locations.
 
 ---
 
@@ -34,202 +36,282 @@ It includes recording parameters, archive locations, integration methods and ope
 This document covers:
 
 - Camera inventory
-- Recording configuration
-- Video parameters
+- RTSP sources
+- Recording parameters
+- Universal recording engine
+- Camera configuration files
 - Archive locations
-- Integration with FFmpeg
-- Operational recommendations
+- Operational configuration
 
 ---
 
 ## Camera Overview
 
-| Camera | Status | Recording | Archive |
-|----------|---------|------------|----------|
-| Bahus | 🟢 Active | RTSP → FFmpeg | `/home/ftpuser/Videos/Bahus` |
-| LaVanda | 🟢 Active | RTSP → FFmpeg | `/home/ftpuser/Videos/LaVanda` |
-| Salon | 🟢 Active | RTSP → FFmpeg | `/home/ftpuser/Videos/Salon` |
+| Camera | Status | Source | Recorder | Archive |
+|--------|--------|--------|----------|---------|
+| Bahus | 🟢 Active | RTSP | `record_rtsp.sh` | `/home/ftpuser/Videos/Bahus` |
+| LaVanda | 🟢 Active | RTSP | `record_rtsp.sh` | `/home/ftpuser/Videos/LaVanda` |
+| Salon | 🟢 Active | RTSP | `record_rtsp.sh` | `/home/ftpuser/Videos/Salon` |
 
 ---
 
-# Bahus
+# Universal Recording Engine
 
-## Status
+## Recorder
 
-Active
+    /usr/local/bin/record_rtsp.sh
 
-## Recording
+Current version:
 
-- Source: RTSP
-- Recorder: FFmpeg
-- Container: MKV
-- Codec: HEVC (H.265)
+    record_rtsp.sh 1.4
 
-### Video
+The same recording engine is used by all production camera services.
+
+---
+
+## Configuration Directory
+
+Camera-specific configuration files are stored in:
+
+    /etc/propilrybu/
+
+Current production configurations:
+
+    /etc/propilrybu/bahus.conf
+    /etc/propilrybu/lavanda.conf
+    /etc/propilrybu/salon.conf
+
+Test configuration:
+
+    /etc/propilrybu/test.conf
+
+Credentials are stored only in the corresponding configuration files and are not documented here.
+
+---
+
+# Camera Parameters
+
+## Bahus
+
+### Configuration
+
+    /etc/propilrybu/bahus.conf
+
+### Recording
 
 | Parameter | Value |
 |-----------|-------|
-| Resolution | 3728×1056 |
-| FPS | 12 |
-| Codec | HEVC |
-| Audio | PCM A-law |
+| Camera | Bahus |
+| Source | RTSP |
+| Container | MKV |
+| Codec | HEVC (H.265) |
+| Segment time | 300 seconds |
+| Wallclock timestamps | Disabled |
+| Transcoding | Disabled |
+| Output | `/home/ftpuser/Videos/Bahus` |
 
-### Archive
+### RTSP
 
-```text
-/home/ftpuser/Videos/Bahus
-```
+The RTSP source is configured in:
 
-Recording is organized into video files without transcoding.
+    /etc/propilrybu/bahus.conf
+
+Credentials are not stored in documentation.
 
 ---
 
 # LaVanda
 
-## Status
+## Configuration
 
-Active
+    /etc/propilrybu/lavanda.conf
 
-## Recording
-
-- Source: RTSP
-- Recorder: FFmpeg
-- Container: MKV
-- Codec: HEVC (H.265)
-
-### Video
+### Recording
 
 | Parameter | Value |
 |-----------|-------|
-| Resolution | 2560×1440 |
-| FPS | 25 |
-| Codec | HEVC |
-| Audio | None |
+| Camera | LaVanda |
+| Source | RTSP |
+| Container | MKV |
+| Codec | HEVC (H.265) |
+| Segment time | 300 seconds |
+| Wallclock timestamps | Enabled |
+| Transcoding | Disabled |
+| Output | `/home/ftpuser/Videos/LaVanda` |
 
-### Archive
+### RTSP
 
-```text
-/home/ftpuser/Videos/LaVanda
-```
+The RTSP source is configured in:
 
-The recording system writes completed MKV files directly into the archive directory.
+    /etc/propilrybu/lavanda.conf
 
-No intermediate processing is performed.
+Credentials are not stored in documentation.
 
 ---
 
 # Salon
 
-## Status
+## Configuration
 
-Active
+    /etc/propilrybu/salon.conf
 
-## Recording
-
-- Source: RTSP
-- Recorder: FFmpeg
-- Container: MKV
-- Codec: HEVC (H.265)
-
-### Video
+### Recording
 
 | Parameter | Value |
 |-----------|-------|
-| Resolution | 1920×1080 |
-| FPS | 15 |
-| Codec | HEVC |
-| Audio | AAC |
-
-### Archive
-
-```text
-/home/ftpuser/Videos/Salon
-```
-
-Recording is continuous and managed by a dedicated systemd service.
-
----
-
-## Recording Policy
-
-Each camera:
-
-- records independently;
-- uses its own archive directory;
-- is isolated from other recording services;
-- can be restarted independently.
-
-Failure of one camera does not interrupt recording from the others.
-
----
-
-## Archive Layout
-
-```text
-/home/ftpuser/Videos/
-│
-├── Bahus/
-├── LaVanda/
-└── Salon/
-```
-
----
-
-## Video Format
-
-Current recording format:
-
-| Parameter | Value |
-|-----------|-------|
+| Camera | Salon |
+| Source | RTSP |
 | Container | MKV |
 | Codec | HEVC (H.265) |
-| Recording | Direct stream copy |
+| Segment time | 300 seconds |
+| Wallclock timestamps | Enabled |
 | Transcoding | Disabled |
+| Output | `/home/ftpuser/Videos/Salon` |
 
-The system stores the original camera stream without re-encoding.
+### RTSP
+
+The RTSP source is configured in:
+
+    /etc/propilrybu/salon.conf
+
+Credentials are not stored in documentation.
 
 ---
 
-## Camera Replacement Policy
+# Configuration Parameters
 
-When replacing a camera, the following requirements should be met:
+The universal recorder supports the following camera configuration parameters:
+
+| Parameter | Description |
+|-----------|-------------|
+| `CAMERA_NAME` | Camera identifier |
+| `RTSP_URL` | RTSP source URL |
+| `OUTPUT_DIR` | Archive directory |
+| `SEGMENT_TIME` | Segment duration in seconds |
+| `LOG_LEVEL` | FFmpeg logging level |
+| `FFMPEG_BIN` | FFmpeg executable |
+| `USE_WALLCLOCK` | Wallclock timestamp mode |
+
+---
+
+## Current Wallclock Configuration
+
+| Camera | `USE_WALLCLOCK` |
+|--------|-----------------|
+| Bahus | `0` |
+| LaVanda | `1` |
+| Salon | `1` |
+
+Wallclock mode is enabled for LaVanda and Salon.
+
+---
+
+# Recording Format
+
+All production cameras currently use:
+
+    Container: MKV
+    Codec: HEVC (H.265)
+    Recording: Direct stream copy
+    Transcoding: Disabled
+    Segment time: 300 seconds
+
+The original camera stream is stored without video re-encoding.
+
+---
+
+# Archive Layout
+
+    /home/ftpuser/Videos/
+    ├── Bahus/
+    ├── LaVanda/
+    └── Salon/
+
+Each camera uses an independent archive directory.
+
+---
+
+# Service Integration
+
+Each production camera is managed by a separate systemd service.
+
+    bahus-rtsp.service
+            │
+            └── record_rtsp.sh
+                    └── bahus.conf
+
+    lavanda-rtsp.service
+            │
+            └── record_rtsp.sh
+                    └── lavanda.conf
+
+    salon-rtsp.service
+            │
+            └── record_rtsp.sh
+                    └── salon.conf
+
+Each service can be started, stopped and restarted independently.
+
+Failure of one camera service does not directly stop the other camera services.
+
+---
+
+# Operational Rules
+
+1. Camera credentials must not be stored in documentation.
+2. Camera-specific parameters must be changed in `/etc/propilrybu/*.conf`.
+3. Production camera services must use the universal recording engine.
+4. Each camera service must use its corresponding configuration file.
+5. Archive directories must remain separate for each camera.
+6. Configuration changes must be tested before production deployment.
+
+---
+
+# Test Configuration
+
+A separate test configuration is available:
+
+    /etc/propilrybu/test.conf
+
+Output directory:
+
+    /home/ftpuser/Videos/Test
+
+The test configuration must not be used by production camera services.
+
+---
+
+# Camera Replacement Requirements
+
+A replacement camera should provide:
 
 - RTSP support
-- H.265 (HEVC) support
-- Stable network connectivity
-- Continuous streaming capability
+- HEVC (H.265) support where required
+- Stable continuous streaming
+- Network connectivity suitable for continuous recording
 - Compatibility with FFmpeg
 
 ONVIF support is recommended but not mandatory.
 
 ---
 
-## Future Improvements
-
-Planned enhancements:
-
-- Camera health monitoring
-- Automatic stream verification
-- Snapshot generation
-- Camera inventory identifiers
-- Firmware tracking
-
----
-
-## Related Documents
+# Related Documents
 
 | Document | Description |
 |----------|-------------|
-| 01-server-passport.md | Server Passport |
-| 02-system-architecture.md | System Architecture |
-| 04-storage.md | Storage |
-| 05-services.md | Services |
-| 06-scripts.md | Scripts |
+| `00-document-template.md` | Documentation Template |
+| `01-server-passport.md` | Server Passport |
+| `02-system-architecture.md` | System Architecture |
+| `04-storage.md` | Storage |
+| `05-services.md` | Services |
+| `06-scripts.md` | Scripts |
+| `07-monitoring.md` | Monitoring |
 
 ---
 
-## Change History
+# Change History
 
 | Version | Date | Description |
-|----------|------------|-------------------------------|
+|---------|------------|-------------|
 | 1.0 | 2026-07-31 | Initial camera configuration document created |
+| 1.1 | 2026-09-14 | Updated for universal recording engine and current production configuration |
