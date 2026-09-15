@@ -4,16 +4,16 @@
 | **Title** | Scripts |
 | **Category** | Automation |
 | **Project** | ProPilRybu |
-| **Version** | 1.0 |
+| **Version** | 1.1 |
 | **Status** | 🟢 Production |
 | **Owner** | Domovir |
 | **Maintainer** | Domovir |
 | **Repository** | https://github.com/Domovir/ProPilRybu |
 | **License** | MIT |
 | **Created** | 2026-07-31 |
-| **Last Updated** | 2026-07-31 |
-| **Reviewed** | — |
-| **Next Review** | 2026-10-31 |
+| **Last Updated** | 2026-09-15 |
+| **Reviewed** | 2026-09-15 |
+| **Next Review** | 2026-12-15 |
 
 > **This document is part of the official technical documentation of the ProPilRybu project.**
 
@@ -37,6 +37,7 @@ This document covers:
 - Monitoring scripts
 - Cleanup scripts
 - Notification scripts
+- Maintenance utilities
 - Script dependencies
 - Operational recommendations
 
@@ -46,9 +47,10 @@ This document covers:
 
 | Script | Language | Purpose |
 |----------|-----------|----------|
-| bahus_rtsp.sh | Bash | Records Bahus camera |
-| lavanda_rtsp.sh | Bash | Records LaVanda camera |
-| salon_rtsp.sh | Bash | Records Salon camera |
+| record_rtsp.sh | Bash | Universal RTSP recording engine |
+| bahus_rtsp.sh | Bash | Legacy Bahus recording script |
+| lavanda_rtsp.sh | Bash | Legacy LaVanda recording script |
+| salon_rtsp.sh | Bash | Legacy Salon recording script |
 | rtsp_watchdog.sh | Bash | Monitors recording services |
 | cctv_cleanup.sh | Bash | Automatic archive cleanup |
 | clean_cams.sh | Bash | Camera maintenance utilities |
@@ -56,20 +58,67 @@ This document covers:
 
 ---
 
-# Recording Scripts
+# Universal Recording Script
+
+## record_rtsp.sh
+
+### Purpose
+
+Provides a single recording engine for all production RTSP cameras.
+
+### Version
+
+1.4
+
+### Responsibilities
+
+- Load camera configuration.
+- Validate configuration parameters.
+- Start FFmpeg.
+- Connect to the RTSP stream.
+- Record video into MKV files.
+- Preserve the original HEVC stream.
+- Create segmented archive files.
+- Support camera-specific timestamp handling.
+- Provide common recording logic for all cameras.
+
+### Configuration
+
+Camera-specific settings are stored in:
+
+`/etc/propilrybu/`
+
+Current production configurations:
+
+- `bahus.conf`
+- `lavanda.conf`
+- `salon.conf`
+
+Test configuration:
+
+- `test.conf`
+
+### Production services
+
+The universal recorder is used by:
+
+- `bahus-rtsp.service`
+- `lavanda-rtsp.service`
+- `salon-rtsp.service`
+
+---
+
+# Legacy Recording Scripts
 
 ## bahus_rtsp.sh
 
 ### Purpose
 
-Continuously records the RTSP stream from the Bahus camera.
+Legacy recording script previously used for the Bahus camera.
 
-### Responsibilities
+The script is retained as reserve/reference material.
 
-- Start FFmpeg.
-- Record video into MKV files.
-- Preserve the original HEVC stream.
-- Create sequential archive files.
+Production recording is now performed by `record_rtsp.sh`.
 
 ---
 
@@ -77,13 +126,11 @@ Continuously records the RTSP stream from the Bahus camera.
 
 ### Purpose
 
-Continuously records the LaVanda camera.
+Legacy recording script previously used for the LaVanda camera.
 
-### Responsibilities
+The script is retained as reserve/reference material.
 
-- Connect to the RTSP stream.
-- Record directly to MKV.
-- Store recordings in the archive.
+Production recording is now performed by `record_rtsp.sh`.
 
 ---
 
@@ -91,13 +138,11 @@ Continuously records the LaVanda camera.
 
 ### Purpose
 
-Continuously records the Salon camera.
+Legacy recording script previously used for the Salon camera.
 
-### Responsibilities
+The script is retained as reserve/reference material.
 
-- Maintain uninterrupted recording.
-- Create archive files.
-- Operate as a dedicated recording service.
+Production recording is now performed by `record_rtsp.sh`.
 
 ---
 
@@ -107,20 +152,18 @@ Continuously records the Salon camera.
 
 ### Purpose
 
-Verifies that all recording services are operating correctly.
+Verifies that the RTSP recording services are operating correctly.
 
 ### Responsibilities
 
 - Check recording services.
-- Detect failures.
+- Detect service failures.
 - Restart services when required.
 - Maintain continuous recording.
 
 Execution is controlled by:
 
-```text
-rtsp-watchdog.timer
-```
+`rtsp-watchdog.timer`
 
 ---
 
@@ -134,25 +177,36 @@ Automatically maintains free disk space.
 
 ### Responsibilities
 
-- Monitor storage usage.
+- Monitor archive storage usage.
 - Remove the oldest completed recordings.
-- Remove zero-byte MKV files.
+- Remove stale zero-byte MKV files.
 - Delete empty directories.
+- Prevent simultaneous cleanup executions.
 - Generate cleanup logs.
-- Send email notifications.
+- Send email notifications when configured.
 
-Current cleanup policy:
+### Archive
+
+The script operates on:
+
+`/home/ftpuser/Videos`
+
+Camera archives:
+
+- `Bahus`
+- `LaVanda`
+- `Salon`
+
+### Current cleanup policy
 
 | Parameter | Value |
 |-----------|-------|
 | Cleanup Start | 90% |
 | Cleanup Target | 85% |
 
-Log file:
+### Log file
 
-```text
-/var/log/cctv_cleanup.log
-```
+`/var/log/cctv_cleanup.log`
 
 ---
 
@@ -164,11 +218,14 @@ Log file:
 
 Provides maintenance functions for the recording environment.
 
-Typical maintenance operations include:
+### Responsibilities
 
-- archive cleanup;
-- validation tasks;
-- housekeeping operations.
+- Camera maintenance.
+- Archive housekeeping.
+- Validation tasks.
+- Auxiliary cleanup operations.
+
+This script is not the primary production recording engine.
 
 ---
 
@@ -178,9 +235,9 @@ Typical maintenance operations include:
 
 ### Purpose
 
-Sends email notifications generated by the CCTV system.
+Sends email notifications generated by the CCTV maintenance subsystem.
 
-Notifications include:
+### Notifications include
 
 - cleanup started;
 - cleanup completed;
@@ -193,80 +250,24 @@ The script is called automatically by maintenance scripts.
 # Script Dependencies
 
 ```text
-Recording Scripts
-        │
-        ▼
+Camera
+   │
+   ▼
+record_rtsp.sh
+   │
+   ▼
 FFmpeg
-        │
-        ▼
+   │
+   ▼
 MKV Archive
-        ▲
-        │
+   ▲
+   │
 cctv_cleanup.sh
-        │
-        ▼
+   │
+   ▼
 send_cctv_mail.py
-        ▲
-        │
+
 rtsp_watchdog.sh
-```
-
----
-
-# Script Locations
-
-| Script | Location |
-|----------|----------|
-| bahus_rtsp.sh | /usr/local/bin |
-| lavanda_rtsp.sh | /usr/local/bin |
-| salon_rtsp.sh | /usr/local/bin |
-| rtsp_watchdog.sh | /usr/local/bin |
-| cctv_cleanup.sh | /usr/local/bin |
-| clean_cams.sh | /usr/local/bin |
-| send_cctv_mail.py | /usr/local/bin |
-
----
-
-# Design Principles
-
-Automation scripts follow these principles:
-
-- one script — one responsibility;
-- minimal external dependencies;
-- automatic recovery where possible;
-- extensive logging;
-- compatibility with systemd;
-- unattended operation.
-
----
-
-# Future Improvements
-
-Planned enhancements include:
-
-- unified configuration file;
-- centralized logging;
-- enhanced health checks;
-- Telegram notifications;
-- performance metrics;
-- automated testing.
-
----
-
-## Related Documents
-
-| Document | Description |
-|----------|-------------|
-| 02-system-architecture.md | System Architecture |
-| 04-storage.md | Storage |
-| 05-services.md | Services |
-| 07-monitoring.md | Monitoring |
-| 08-maintenance.md | Maintenance |
-
----
-
-## Change History
-
-| Version | Date | Description |
-|----------|------------|-------------------------------|
-| 1.0 | 2026-07-31 | Initial automation scripts documentation created |
+   │
+   ▼
+RTSP Recording Services
